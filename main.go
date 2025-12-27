@@ -7,6 +7,7 @@ import (
 
 func main() {
 	message := os.Args[1]
-	hash := sha256(message)
+	// check if os.Args[1] exists
+	hash := sha256Hash(message)
 	fmt.Println(hash)
 }
