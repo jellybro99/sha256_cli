@@ -4,8 +4,8 @@ import (
 	"encoding/binary"
 )
 
-func sha256Hash(message string) []uint32 {
-	paddedMessageBytes := preprocessMessage(message)
+func sha256Hash(messageString string) []uint32 {
+	message := preprocessMessage(messageString)
 	hashArray := preprocessHash()
 
 	return hashArray
@@ -13,7 +13,7 @@ func sha256Hash(message string) []uint32 {
 
 func preprocessMessage(messageString string) []uint32 {
 	message := []byte(messageString)
-	messsageLength := uint64(len(message)) * 8
+	messageLength := uint64(len(message)) * 8
 
 	// will need to handle cases where message isn't evenly divisable into bits
 	message = append(message, 0x80)
@@ -22,7 +22,7 @@ func preprocessMessage(messageString string) []uint32 {
 	}
 
 	lengthBytes := make([]byte, 8)
-	binary.BigEndian.PutUint64(lengthBytes, messsageLength)
+	binary.BigEndian.PutUint64(lengthBytes, messageLength)
 	message = append(message, lengthBytes...)
 
 	result := make([]uint32, len(message)/4)
