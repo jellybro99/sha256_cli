@@ -8,11 +8,11 @@ func Hash(messageString string) [8]uint32 {
 	hashArray := preprocessHash()
 
 	// this is straight from nist, so I just copied their variable names
-	for i := 1; i <= len(message); i++ {
+	for _, m := range message {
 		w := make([]uint32, 64)
 		for t := range 64 {
 			if t < 16 {
-				w[t] = message[i-1]
+				w[t] = m
 			} else {
 				w[t] = smallSigma1(w[t-2]) + w[t-7] + smallSigma0(w[t-15]) + w[t-16]
 			}
@@ -34,8 +34,8 @@ func Hash(messageString string) [8]uint32 {
 			v[0] = t1 + t2
 		}
 
-		for i := range hashArray {
-			hashArray[i] = hashArray[i] + v[i]
+		for i := range 8 {
+			hashArray[i] += v[i]
 		}
 	}
 
