@@ -11,5 +11,5 @@ func main() {
 	message := os.Args[1]
 	// check if os.Args[1] exists
 	hash := sha256.Hash(message)
-	fmt.Println(hash)
+	fmt.Printf("%X\n", hash)
 }

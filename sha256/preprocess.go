@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 )
 
-func preprocessMessage(messageString string) []uint32 {
+func preprocessMessage(messageString string) []byte {
 	message := []byte(messageString)
 	messageLength := uint64(len(message)) * 8
 
@@ -18,11 +18,7 @@ func preprocessMessage(messageString string) []uint32 {
 	binary.BigEndian.PutUint64(lengthBytes, messageLength)
 	message = append(message, lengthBytes...)
 
-	result := make([]uint32, len(message)/4)
-	for i := range result {
-		result[i] = binary.BigEndian.Uint32(message[i*4 : i*4+4])
-	}
-	return result
+	return message
 }
 
 func preprocessHash() [8]uint32 {
