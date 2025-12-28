@@ -1,15 +1,11 @@
+/*
+Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
-import (
-	"fmt"
-	"os"
-
-	"github.com/jellybro99/sha/sha256"
-)
+import "github.com/jellybro99/sha/cmd"
 
 func main() {
-	message := os.Args[1]
-	// check if os.Args[1] exists
-	hash := sha256.Hash(message)
-	fmt.Printf("%X\n", hash)
+	cmd.Execute()
 }
