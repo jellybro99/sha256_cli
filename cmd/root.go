@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/jellybro99/sha256_cli/sha256"
@@ -35,10 +36,33 @@ func init() {
 func runHasher(cmd *cobra.Command, args []string) {
 	result, err := cmd.Flags().GetBool("sha256")
 	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 	if result {
-		fmt.Printf("%s: %X\n", args[0], sha256.Hash(args[0]))
+		if len(args) > 0 {
+			for _, message := range args {
+				fmt.Printf("%s: %X\n", message, sha256.Hash(message))
+			}
+		} else {
+			file := os.Stdin
+			fi, err := file.Stat()
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			if fi.Size() > 0 {
+				message, err := io.ReadAll(os.Stdin)
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
+				fmt.Printf("stdin: %X\n", sha256.Hash(string(message)))
+			} else {
+				fmt.Println("no input")
+			}
+
+		}
 	} else {
 		fmt.Println("use -h")
 	}
