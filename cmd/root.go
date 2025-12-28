@@ -12,7 +12,7 @@ var rootCmd = &cobra.Command{
 	Use:   "sha",
 	Short: "A go implementation of the sha256 hashing algorithm",
 	Long: `This is a go cli implementation of the sha256 hashing algorithm
-	Run: sha256 message`,
+	Run: sha <message>`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
