@@ -2,6 +2,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -30,40 +31,58 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().Bool("sha256", false, "Use the sha256 hash function")
+	rootCmd.Flags().String("hash", "sha256", "Use the given hash function. Currently supported: sha256")
 }
 
 func runHasher(cmd *cobra.Command, args []string) {
-	result, err := cmd.Flags().GetBool("sha256")
+	hashFunction, err := cmd.Flags().GetString("hash")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	if result {
-		if len(args) > 0 {
-			for _, message := range args {
-				fmt.Printf("%s: %X\n", message, sha256.Hash(message))
-			}
-		} else {
-			file := os.Stdin
-			fi, err := file.Stat()
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-			if fi.Size() > 0 {
-				message, err := io.ReadAll(os.Stdin)
-				if err != nil {
-					fmt.Println(err)
-					os.Exit(1)
-				}
-				fmt.Printf("stdin: %X\n", sha256.Hash(string(message)))
-			} else {
-				fmt.Println("no input")
-			}
 
-		}
-	} else {
-		fmt.Println("use -h")
+	messages, err := getInputs(args)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
+
+	if len(messages) == 0 {
+		fmt.Println("no input given")
+	}
+
+	switch hashFunction {
+	case "sha256":
+		if len(messages) == 1 {
+			fmt.Printf("%X\n", sha256.Hash(messages[0]))
+			break
+		}
+		for _, message := range messages {
+			fmt.Printf("%s: %X\n", message, sha256.Hash(message))
+		}
+	default:
+		fmt.Println("Given hash is not supported")
+	}
+}
+
+func getInputs(args []string) ([]string, error) {
+	if len(args) > 0 {
+		return args, nil
+	}
+
+	file, err := os.Stdin.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	if file.Size() == 0 {
+		return nil, errors.New("no input")
+	}
+
+	message, err := io.ReadAll(os.Stdin)
+	if err != nil {
+		return nil, err
+	}
+
+	return []string{string(message)}, nil
 }
