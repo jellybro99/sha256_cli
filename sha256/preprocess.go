@@ -33,3 +33,19 @@ func preprocessHash() [8]uint32 {
 		0x5be0cd19,
 	}
 }
+
+func createBlocks(message []byte) [][16]uint32 {
+	var blocks [][16]uint32
+
+	for i := 0; i < len(message); i += 64 {
+		var block [16]uint32
+
+		for j := range 16 {
+			start := i + j*4
+			block[j] = binary.BigEndian.Uint32(message[start : start+4])
+		}
+
+		blocks = append(blocks, block)
+	}
+	return blocks
+}

@@ -3,25 +3,21 @@ Package sha256 implements the sha256 hash function
 */
 package sha256
 
-import (
-	"encoding/binary"
-)
-
 func Hash(messageString string) [8]uint32 {
 	message := preprocessMessage(messageString)
+	blocks := createBlocks(message)
 	hashArray := preprocessHash()
 
 	// this is straight from nist, so I just copied their variable names
-	for i := 0; i < len(message); i += 64 {
-		block := message[i : i+64]
+	for _, block := range blocks {
 		var w [64]uint32
 
-		for t := range 64 {
-			if t < 16 {
-				w[t] = binary.BigEndian.Uint32(block[t*4 : (t+1)*4])
-			} else {
-				w[t] = smallSigma1(w[t-2]) + w[t-7] + smallSigma0(w[t-15]) + w[t-16]
-			}
+		copy(w[:16], block[:])
+		for t := 16; t < 64; t++ {
+			w[t] = smallSigma1(w[t-2]) +
+				w[t-7] +
+				smallSigma0(w[t-15]) +
+				w[t-16]
 		}
 
 		var v [8]uint32
