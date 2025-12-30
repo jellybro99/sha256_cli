@@ -38,15 +38,15 @@ func runHasher(cmd *cobra.Command, args []string) {
 			fmt.Printf("%s: %s\n", message, formatHash(sha256.Hash(message)))
 		}
 	default:
-		fmt.Println("Given hash is not supported")
+		fmt.Println("Given hash function is not supported")
 	}
 }
 
 func formatHash(hash [8]uint32) string {
 	var sb strings.Builder
 
-	for _, section := range hash {
-		fmt.Fprintf(&sb, "%X ", section)
+	for _, word := range hash {
+		fmt.Fprintf(&sb, "%X ", word)
 	}
 
 	return sb.String()
