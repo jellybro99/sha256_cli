@@ -27,5 +27,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().String("hash", "sha256", "Use the given hash function. Currently supported: sha256")
+	rootCmd.Flags().Bool("sha256", true, "Use the sha256 hashing algorithm")
+	rootCmd.Flags().StringP("output", "o", "hex", "Output in the given format (hex, dec)")
 }

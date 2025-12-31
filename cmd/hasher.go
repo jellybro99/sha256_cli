@@ -12,7 +12,12 @@ import (
 )
 
 func runHasher(cmd *cobra.Command, args []string) {
-	hashFunction, err := cmd.Flags().GetString("hash")
+	useSha256, err := cmd.Flags().GetBool("sha256")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	outputFormat, err := cmd.Flags().GetString("output")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -28,26 +33,30 @@ func runHasher(cmd *cobra.Command, args []string) {
 		fmt.Println("no input given")
 	}
 
-	switch hashFunction {
-	case "sha256":
+	if useSha256 {
 		if len(messages) == 1 {
-			fmt.Println(formatHash(sha256.Hash(messages[0])))
-			break
+			fmt.Print(formatHash(sha256.Hash(messages[0]), outputFormat))
 		}
 		for _, message := range messages {
-			fmt.Printf("%s: %s\n", message, formatHash(sha256.Hash(message)))
+			fmt.Printf("%s: %s", message, formatHash(sha256.Hash(message), outputFormat))
 		}
-	default:
+	} else {
 		fmt.Println("Given hash function is not supported")
 	}
 }
 
-func formatHash(hash [8]uint32) string {
+func formatHash(hash [8]uint32, outputFormat string) string {
 	var sb strings.Builder
 
 	for _, word := range hash {
-		fmt.Fprintf(&sb, "%X ", word)
+		switch outputFormat {
+		case "hex":
+			fmt.Fprintf(&sb, "%X ", word)
+		case "dec":
+			fmt.Fprintf(&sb, "%d ", word)
+		}
 	}
+	sb.WriteString("\n")
 
 	return sb.String()
 }
