@@ -1,21 +1,13 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"io"
-	"os"
 	"strings"
 )
 
 type Hasher func(string) [8]uint32
 
-func hasher(hashFunction Hasher, outputFormat string, args []string) error {
-	messages, err := getInputs(args)
-	if err != nil {
-		return err
-	}
-
+func hasher(hashFunction Hasher, outputFormat string, messages []string) error {
 	if len(messages) == 1 {
 		fmt.Print(formatHash(hashFunction(messages[0]), outputFormat))
 	} else {
@@ -42,26 +34,4 @@ func formatHash(hash [8]uint32, outputFormat string) string {
 	sb.WriteString("\n")
 
 	return sb.String()
-}
-
-func getInputs(args []string) ([]string, error) {
-	if len(args) > 0 {
-		return args, nil
-	}
-
-	file, err := os.Stdin.Stat()
-	if err != nil {
-		return nil, err
-	}
-
-	if file.Size() == 0 {
-		return nil, errors.New("no input")
-	}
-
-	message, err := io.ReadAll(os.Stdin)
-	if err != nil {
-		return nil, err
-	}
-
-	return []string{string(message)}, nil
 }

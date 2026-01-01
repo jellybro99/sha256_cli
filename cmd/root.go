@@ -2,6 +2,10 @@
 package cmd
 
 import (
+	"errors"
+	"io"
+	"os"
+
 	"github.com/jellybro99/sha256_cli/sha256"
 	"github.com/spf13/cobra"
 )
@@ -40,5 +44,32 @@ func runHasher(cmd *cobra.Command, args []string, hashFunction Hasher) error {
 	if err != nil {
 		return err
 	}
-	return hasher(hashFunction, outputFormat, args)
+	messages, err := getInputs(args)
+	if err != nil {
+		return err
+	}
+
+	return hasher(hashFunction, outputFormat, messages)
+}
+
+func getInputs(args []string) ([]string, error) {
+	if len(args) > 0 {
+		return args, nil
+	}
+
+	file, err := os.Stdin.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	if file.Size() == 0 {
+		return nil, errors.New("no input given")
+	}
+
+	message, err := io.ReadAll(os.Stdin)
+	if err != nil {
+		return nil, err
+	}
+
+	return []string{string(message)}, nil
 }
