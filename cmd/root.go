@@ -28,7 +28,7 @@ func init() {
 func newHashCommand(hashName string, hashFunction Hasher) *cobra.Command {
 	return &cobra.Command{
 		Use:   hashName,
-		Short: "Compute the" + hashName + "hash of the given input",
+		Short: "Compute the " + hashName + " hash of the given input",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runHasher(cmd, args, hashFunction)
 		},
