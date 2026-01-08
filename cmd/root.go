@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/jellybro99/sha256_cli/sha256"
+	"github.com/jellybro99/sha/sha256"
 	"github.com/spf13/cobra"
 )
 

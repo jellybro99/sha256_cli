@@ -1,4 +1,4 @@
-module github.com/jellybro99/sha256_cli
+module github.com/jellybro99/sha
 
 go 1.25.5
 

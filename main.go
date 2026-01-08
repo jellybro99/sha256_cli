@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/jellybro99/sha256_cli/cmd"
+	"github.com/jellybro99/sha/cmd"
 )
 
 func main() {
